@@ -1,5 +1,8 @@
 package org.knowm.xchange.kraken.service;
 
+import java.io.IOException;
+import java.util.Map;
+
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.trade.LimitOrder;
@@ -23,9 +26,6 @@ import org.knowm.xchange.kraken.dto.trade.results.KrakenOrderResult;
 import org.knowm.xchange.kraken.dto.trade.results.KrakenQueryOrderResult;
 import org.knowm.xchange.kraken.dto.trade.results.KrakenQueryTradeResult;
 import org.knowm.xchange.kraken.dto.trade.results.KrakenTradeHistoryResult;
-
-import java.io.IOException;
-import java.util.Map;
 
 public class KrakenTradeServiceRaw extends KrakenBaseService {
 
@@ -58,7 +58,7 @@ public class KrakenTradeServiceRaw extends KrakenBaseService {
   }
 
   public Map<String, KrakenOrder> getKrakenClosedOrders(boolean includeTrades, String userRef, String start, String end, String offset,
-                                                        String closeTime) throws IOException {
+      String closeTime) throws IOException {
 
     KrakenClosedOrdersResult result = kraken.closedOrders(includeTrades, userRef, start, end, offset, closeTime,
         exchange.getExchangeSpecification().getApiKey(), signatureCreator, exchange.getNonceFactory());
@@ -129,7 +129,7 @@ public class KrakenTradeServiceRaw extends KrakenBaseService {
   public KrakenOrderResponse placeKrakenMarketOrder(MarketOrder marketOrder) throws IOException {
 
     KrakenType type = KrakenType.fromOrderType(marketOrder.getType());
-    KrakenOrderBuilder orderBuilder = KrakenStandardOrder.getMarketOrderBuilder(marketOrder.getCurrencyPair(), type, marketOrder.getTradableAmount())
+    KrakenOrderBuilder orderBuilder = KrakenStandardOrder.getMarketOrderBuilder(marketOrder.getCurrencyPair(), type, marketOrder.getOriginalAmount())
         .withOrderFlags(marketOrder.getOrderFlags());
 
     return placeKrakenOrder(orderBuilder.buildOrder());
@@ -139,7 +139,7 @@ public class KrakenTradeServiceRaw extends KrakenBaseService {
 
     KrakenType type = KrakenType.fromOrderType(limitOrder.getType());
     KrakenOrderBuilder krakenOrderBuilder = KrakenStandardOrder
-        .getLimitOrderBuilder(limitOrder.getCurrencyPair(), type, limitOrder.getLimitPrice().toPlainString(), limitOrder.getTradableAmount())
+        .getLimitOrderBuilder(limitOrder.getCurrencyPair(), type, limitOrder.getLimitPrice().toPlainString(), limitOrder.getOriginalAmount())
         .withOrderFlags(limitOrder.getOrderFlags());
 
     return placeKrakenOrder(krakenOrderBuilder.buildOrder());

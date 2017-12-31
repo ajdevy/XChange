@@ -6,7 +6,6 @@ import org.knowm.xchange.ExchangeSpecification;
 
 public class BaseAuthenticatedServiceTest extends BaseServiceTest {
 
-
   private static final String API_KEY = "hitbtc_api_key";
   private static final String SECRET_KEY = "hitbtc_secret_key";
 
@@ -20,6 +19,7 @@ public class BaseAuthenticatedServiceTest extends BaseServiceTest {
 
   @BeforeClass
   public static void setUpBaseClass() {
+
     exchangeSpecification = new ExchangeSpecification(HitbtcExchange.class);
     exchangeSpecification.setApiKey(getApiKey());
     exchangeSpecification.setSecretKey(getSecret());

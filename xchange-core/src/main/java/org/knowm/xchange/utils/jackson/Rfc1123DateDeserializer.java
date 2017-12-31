@@ -7,7 +7,6 @@ import java.util.Locale;
 import org.knowm.xchange.utils.DateUtils;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
@@ -19,7 +18,7 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 public class Rfc1123DateDeserializer extends JsonDeserializer<Date> {
 
   @Override
-  public Date deserialize(JsonParser jp, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
+  public Date deserialize(JsonParser jp, final DeserializationContext ctxt) throws IOException {
 
     return DateUtils.fromRfc1123DateString(jp.getValueAsString(), Locale.US);
   }

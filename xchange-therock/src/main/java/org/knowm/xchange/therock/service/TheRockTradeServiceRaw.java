@@ -1,5 +1,9 @@
 package org.knowm.xchange.therock.service;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
+
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.ExchangeSpecification;
 import org.knowm.xchange.currency.CurrencyPair;
@@ -11,11 +15,8 @@ import org.knowm.xchange.therock.dto.trade.TheRockOrder;
 import org.knowm.xchange.therock.dto.trade.TheRockOrders;
 import org.knowm.xchange.therock.dto.trade.TheRockTransaction;
 import org.knowm.xchange.therock.dto.trade.TheRockUserTrades;
-import si.mazi.rescu.RestProxyFactory;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Date;
+import si.mazi.rescu.RestProxyFactory;
 
 public class TheRockTradeServiceRaw extends TheRockBaseService {
 
@@ -25,7 +26,7 @@ public class TheRockTradeServiceRaw extends TheRockBaseService {
   public TheRockTradeServiceRaw(Exchange exchange) {
     super(exchange);
     final ExchangeSpecification spec = exchange.getExchangeSpecification();
-    this.theRockAuthenticated = RestProxyFactory.createProxy(TheRockAuthenticated.class, spec.getSslUri());
+    this.theRockAuthenticated = RestProxyFactory.createProxy(TheRockAuthenticated.class, spec.getSslUri(), getClientConfig());
     this.signatureCreator = new TheRockDigest(spec.getSecretKey());
   }
 
@@ -56,6 +57,19 @@ public class TheRockTradeServiceRaw extends TheRockBaseService {
     try {
       return theRockAuthenticated.orders(new TheRock.Pair(currencyPair), exchange.getExchangeSpecification().getApiKey(), signatureCreator,
           exchange.getNonceFactory());
+    } catch (TheRockException e) {
+      throw new ExchangeException(e);
+    }
+  }
+
+  public TheRockOrders getTheRockOrders(CurrencyPair currencyPair, Date after, Date before, String status, TheRockOrder.Side side,
+      Long positionId, int page) throws TheRockException, IOException {
+    try {
+      return theRockAuthenticated.orders(new TheRock.Pair(currencyPair),
+          exchange.getExchangeSpecification().getApiKey(), signatureCreator,
+          exchange.getNonceFactory(),
+          after, before, status, side, positionId, page
+      );
     } catch (TheRockException e) {
       throw new ExchangeException(e);
     }

@@ -45,7 +45,7 @@
       "trading_fee": 0.001,
       "min_amount": 0.010000000
     },
-     "BCH/BTC": {
+    "BCH/BTC": {
       "price_scale": 8,
       "trading_fee": 0.0000,
       "min_amount": 0.100000000
@@ -68,22 +68,28 @@
   },
   "currencies": {
     "BCH": {
-      "scale": 8
+      "scale": 8,
+      "withdrawal_fee": 0.001
     },
     "BTC": {
-      "scale": 8
+      "scale": 8,
+      "withdrawal_fee": 0.001
     },
     "ETH": {
-      "scale": 8
+      "scale": 8,
+      "withdrawal_fee": 0.01
     },
     "GBP": {
-      "scale": 2
+      "scale": 2,
+      "withdrawal_fee": 3.80
     },
     "EUR": {
-      "scale": 2
+      "scale": 2,
+      "withdrawal_fee": 3.80
     },
     "USD": {
-      "scale": 2
+      "scale": 2,
+      "withdrawal_fee": 3.80
     }
   },
   "private_rate_limits": [

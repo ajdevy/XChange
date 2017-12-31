@@ -1,5 +1,13 @@
 package org.knowm.xchange.poloniex.service;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.annotation.Nullable;
+
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.dto.account.Balance;
@@ -9,15 +17,9 @@ import org.knowm.xchange.poloniex.PoloniexException;
 import org.knowm.xchange.poloniex.dto.LoanInfo;
 import org.knowm.xchange.poloniex.dto.account.PoloniexBalance;
 import org.knowm.xchange.poloniex.dto.account.PoloniexLoan;
+import org.knowm.xchange.poloniex.dto.account.PoloniexWallet;
 import org.knowm.xchange.poloniex.dto.trade.PoloniexDepositsWithdrawalsResponse;
 import org.knowm.xchange.utils.DateUtils;
-
-import javax.annotation.Nullable;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * @author Zach Holmes
@@ -90,6 +92,11 @@ public class PoloniexAccountServiceRaw extends PoloniexBaseService {
   public PoloniexDepositsWithdrawalsResponse returnDepositsWithdrawals(Date start, Date end) throws IOException {
     return poloniexAuthenticated.returnDepositsWithdrawals(apiKey, signatureCreator, exchange.getNonceFactory(), DateUtils.toUnixTimeNullSafe(start),
         DateUtils.toUnixTimeNullSafe(end));
+  }
+
+  public String transfer(Currency currency, BigDecimal amount, PoloniexWallet fromWallet, PoloniexWallet toWallet) throws IOException {
+    return poloniexAuthenticated
+        .transferBalance(apiKey, signatureCreator, exchange.getNonceFactory(), currency.getCurrencyCode(), amount, fromWallet.name().toLowerCase(), toWallet.name().toLowerCase()).getMessage();
   }
 
 }

@@ -38,7 +38,7 @@ public interface AccountService extends BaseService {
    *                                               implemented
    * @throws IOException                           - Indication that a networking error occurred while fetching JSON data
    */
-  AccountInfo getAccountInfo() throws ExchangeException, NotAvailableFromExchangeException, NotYetImplementedForExchangeException, IOException;
+  AccountInfo getAccountInfo() throws IOException;
 
   /**
    * Convenience method, typically just delegates to withdrawFunds(WithdrawFundsParams params)
@@ -54,7 +54,7 @@ public interface AccountService extends BaseService {
    * @throws IOException                           - Indication that a networking error occurred while fetching JSON data
    */
   String withdrawFunds(Currency currency, BigDecimal amount,
-      String address) throws ExchangeException, NotAvailableFromExchangeException, NotYetImplementedForExchangeException, IOException;
+      String address) throws IOException;
 
   /**
    * Withdraw funds from this account. Allows to withdraw digital currency funds from the exchange account to an external address
@@ -67,13 +67,13 @@ public interface AccountService extends BaseService {
    *                                               implemented
    * @throws IOException                           - Indication that a networking error occurred while fetching JSON data
    */
-  String withdrawFunds(WithdrawFundsParams params) throws ExchangeException, NotAvailableFromExchangeException, NotYetImplementedForExchangeException, IOException;
+  String withdrawFunds(WithdrawFundsParams params) throws IOException;
 
   /**
    * Request a digital currency address to fund this account. Allows to fund the exchange account with digital currency from an external address
    *
    * @param currency The digital currency that corresponds to the desired deposit address.
-   * @param args
+   * @param args Necessary argument(s) as a {@code String}
    * @return the internal deposit address to send funds to
    * @throws ExchangeException                     - Indication that the exchange reported some kind of error with the request or response
    * @throws NotAvailableFromExchangeException     - Indication that the exchange does not support the requested function or data
@@ -82,7 +82,7 @@ public interface AccountService extends BaseService {
    * @throws IOException                           - Indication that a networking error occurred while fetching JSON data
    */
   String requestDepositAddress(Currency currency,
-      String... args) throws ExchangeException, NotAvailableFromExchangeException, NotYetImplementedForExchangeException, IOException;
+      String... args) throws IOException;
 
   /**
    * Create {@link TradeHistoryParams} object specific to this exchange. Object created by this method may be used to discover supported and required
@@ -93,11 +93,12 @@ public interface AccountService extends BaseService {
 
   /**
    * @return list of funding history if available or an empty list otherwise. This should never return null.
-   * @throws ExchangeException
-   * @throws NotAvailableFromExchangeException
-   * @throws NotYetImplementedForExchangeException
-   * @throws IOException
+   * @throws ExchangeException                     - Indication that the exchange reported some kind of error with the request or response
+   * @throws NotAvailableFromExchangeException     - Indication that the exchange does not support the requested function or data
+   * @throws NotYetImplementedForExchangeException - Indication that the exchange supports the requested function or data, but it has not yet been
+   *                                               implemented
+   * @throws IOException                           - Indication that a networking error occurred while fetching JSON data
    */
   List<FundingRecord> getFundingHistory(
-      TradeHistoryParams params) throws ExchangeException, NotAvailableFromExchangeException, NotYetImplementedForExchangeException, IOException;
+      TradeHistoryParams params) throws IOException;
 }

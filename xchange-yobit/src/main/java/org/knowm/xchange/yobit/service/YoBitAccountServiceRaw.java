@@ -1,19 +1,5 @@
 package org.knowm.xchange.yobit.service;
 
-import org.knowm.xchange.currency.Currency;
-import org.knowm.xchange.dto.account.AccountInfo;
-import org.knowm.xchange.dto.account.Balance;
-import org.knowm.xchange.dto.account.Wallet;
-import org.knowm.xchange.exceptions.ExchangeException;
-import org.knowm.xchange.exceptions.NotAvailableFromExchangeException;
-import org.knowm.xchange.exceptions.NotYetImplementedForExchangeException;
-import org.knowm.xchange.service.account.AccountService;
-import org.knowm.xchange.service.trade.params.DefaultWithdrawFundsParams;
-import org.knowm.xchange.yobit.YoBit;
-import org.knowm.xchange.yobit.YoBitAdapters;
-import org.knowm.xchange.yobit.YoBitExchange;
-import org.knowm.xchange.yobit.dto.BaseYoBitResponse;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -21,13 +7,25 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.knowm.xchange.currency.Currency;
+import org.knowm.xchange.dto.account.AccountInfo;
+import org.knowm.xchange.dto.account.Balance;
+import org.knowm.xchange.dto.account.Wallet;
+import org.knowm.xchange.exceptions.ExchangeException;
+import org.knowm.xchange.service.account.AccountService;
+import org.knowm.xchange.service.trade.params.DefaultWithdrawFundsParams;
+import org.knowm.xchange.yobit.YoBit;
+import org.knowm.xchange.yobit.YoBitAdapters;
+import org.knowm.xchange.yobit.YoBitExchange;
+import org.knowm.xchange.yobit.dto.BaseYoBitResponse;
+
 public abstract class YoBitAccountServiceRaw extends YoBitBaseService<YoBit> implements AccountService {
 
   public YoBitAccountServiceRaw(YoBitExchange exchange) {
     super(YoBit.class, exchange);
   }
 
-  public AccountInfo getInfo() throws ExchangeException, NotAvailableFromExchangeException, NotYetImplementedForExchangeException, IOException {
+  public AccountInfo getInfo() throws IOException {
     BaseYoBitResponse response = service.getInfo(exchange.getExchangeSpecification().getApiKey(), signatureCreator, "getInfo", exchange.getNonceFactory());
 
     if (!response.success)

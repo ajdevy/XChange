@@ -1,5 +1,14 @@
 package org.knowm.xchange.yobit;
 
+import static org.apache.commons.lang3.StringUtils.join;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
 import org.knowm.xchange.dto.Order;
@@ -23,19 +32,12 @@ import org.knowm.xchange.yobit.dto.marketdata.YoBitPairs;
 import org.knowm.xchange.yobit.dto.marketdata.YoBitTicker;
 import org.knowm.xchange.yobit.dto.marketdata.YoBitTrade;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import static org.apache.commons.lang3.StringUtils.join;
-
 public class YoBitAdapters {
 
   public static CurrencyPair adaptCurrencyPair(String pair) {
     String[] currencies = pair.toUpperCase().split("_");
+    if (currencies.length != 2)
+      throw new IllegalStateException("Cannot parse currency pair: " + pair);
     return new CurrencyPair(adaptCurrency(currencies[0]), adaptCurrency(currencies[1]));
   }
 
@@ -66,15 +68,22 @@ public class YoBitAdapters {
       Integer priceScale = value.getDecimal_places();
       currencyPairs.put(pair, new CurrencyPairMetaData(value.getFee(), minSize, null, priceScale));
 
-      if(!currencies.containsKey(pair.base))
-        currencies.put(pair.base, new CurrencyMetaData(8));
+      if (!currencies.containsKey(pair.base)) {
+        CurrencyMetaData currencyMetaData = exchangeMetaData.getCurrencies().get(pair.base);
+        BigDecimal withdrawalFee = currencyMetaData == null ? null : currencyMetaData.getWithdrawalFee();
+        currencies.put(pair.base, new CurrencyMetaData(8, withdrawalFee));
+      }
 
-      if(!currencies.containsKey(pair.counter))
-        currencies.put(pair.counter, new CurrencyMetaData(8));
+      if (!currencies.containsKey(pair.counter)) {
+        CurrencyMetaData currencyMetaData = exchangeMetaData.getCurrencies().get(pair.counter);
+        CurrencyMetaData withdrawalFee = currencyMetaData == null ? null : new CurrencyMetaData(8, currencyMetaData.getWithdrawalFee());
+        currencies.put(pair.counter, withdrawalFee);
+      }
     }
 
     return exchangeMetaData;
   }
+
   private static List<LimitOrder> toLimitOrderList(List<YoBitAsksBidsData> levels, OrderType orderType, CurrencyPair currencyPair) {
 
     List<LimitOrder> allLevels = new ArrayList<>(levels.size());
@@ -193,26 +202,26 @@ public class YoBitAdapters {
   }
 
   public static UserTrade adaptUserTrade(Object key, Map tradeData) {
-      String id = key.toString();
-      String type = tradeData.get("type").toString();
-      String amount = tradeData.get("amount").toString();
-      String rate = tradeData.get("rate").toString();
-      String orderId = tradeData.get("order_id").toString();
-      String pair = tradeData.get("pair").toString();
-      String timestamp = tradeData.get("timestamp").toString();
+    String id = key.toString();
+    String type = tradeData.get("type").toString();
+    String amount = tradeData.get("amount").toString();
+    String rate = tradeData.get("rate").toString();
+    String orderId = tradeData.get("order_id").toString();
+    String pair = tradeData.get("pair").toString();
+    String timestamp = tradeData.get("timestamp").toString();
 
-      Date time = DateUtils.fromUnixTime(Long.valueOf(timestamp));
+    Date time = DateUtils.fromUnixTime(Long.valueOf(timestamp));
 
-      return new UserTrade(
-              adaptType(type),
-              new BigDecimal(amount),
-              adaptCurrencyPair(pair),
-              new BigDecimal(rate),
-              time,
-              id,
-              orderId,
-              null,
-              null
-      );
+    return new UserTrade(
+        adaptType(type),
+        new BigDecimal(amount),
+        adaptCurrencyPair(pair),
+        new BigDecimal(rate),
+        time,
+        id,
+        orderId,
+        null,
+        null
+    );
   }
 }

@@ -31,7 +31,7 @@ public final class BitcoindeAdapters {
 
   }
 
-    public static final Comparator<LimitOrder> ASK_COMPARATOR = new Comparator<LimitOrder>() {
+  public static final Comparator<LimitOrder> ASK_COMPARATOR = new Comparator<LimitOrder>() {
     @Override
     public int compare(LimitOrder o1, LimitOrder o2) {
       return o1.getLimitPrice().compareTo(o2.getLimitPrice());
@@ -52,6 +52,9 @@ public final class BitcoindeAdapters {
    * @return The XChange OrderBook
    */
   public static OrderBook adaptOrderBook(BitcoindeOrderbookWrapper bitcoindeOrderbookWrapper, CurrencyPair currencyPair) {
+
+//    System.out.println("bitcoindeOrderbookWrapper = " + bitcoindeOrderbookWrapper);
+//    System.out.println("credits = " + bitcoindeOrderbookWrapper.getCredits());
 
     List<LimitOrder> asks = createOrders(currencyPair, Order.OrderType.ASK, bitcoindeOrderbookWrapper.getBitcoindeOrders().getAsks());
     List<LimitOrder> bids = createOrders(currencyPair, Order.OrderType.BID, bitcoindeOrderbookWrapper.getBitcoindeOrders().getBids());

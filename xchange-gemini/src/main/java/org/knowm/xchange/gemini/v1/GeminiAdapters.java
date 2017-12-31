@@ -11,6 +11,8 @@ import java.util.Map.Entry;
 
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
+import org.knowm.xchange.dto.Order;
+import org.knowm.xchange.dto.Order.OrderStatus;
 import org.knowm.xchange.dto.Order.OrderType;
 import org.knowm.xchange.dto.account.Balance;
 import org.knowm.xchange.dto.account.Wallet;
@@ -260,8 +262,21 @@ public final class GeminiAdapters {
       OrderType orderType = order.getSide().equalsIgnoreCase("buy") ? OrderType.BID : OrderType.ASK;
       CurrencyPair currencyPair = adaptCurrencyPair(order.getSymbol());
       Date timestamp = convertBigDecimalTimestampToDate(order.getTimestamp());
-      limitOrders
-          .add(new LimitOrder(orderType, order.getRemainingAmount(), currencyPair, String.valueOf(order.getId()), timestamp, order.getPrice()));
+
+      OrderStatus status = OrderStatus.NEW;
+
+      if (order.isCancelled()) {
+        status = Order.OrderStatus.CANCELED;
+      } else if (order.getExecutedAmount().signum() > 0 && order.getExecutedAmount().compareTo(order.getOriginalAmount()) < 0) {
+        status = OrderStatus.PARTIALLY_FILLED;
+      } else if (order.getExecutedAmount().compareTo(order.getOriginalAmount()) == 0) {
+        status = OrderStatus.FILLED;
+      }
+
+      LimitOrder limitOrder = new LimitOrder(orderType, order.getOriginalAmount(), currencyPair,
+          String.valueOf(order.getId()), timestamp, order.getPrice(), order.getAvgExecutionPrice(), order.getExecutedAmount(), status);
+
+      limitOrders.add(limitOrder);
     }
 
     return new OpenOrders(limitOrders);
@@ -285,7 +300,7 @@ public final class GeminiAdapters {
 
   private static Date convertBigDecimalTimestampToDate(BigDecimal timestampInSeconds) {
 
-    return new Date((long)Math.floor(timestampInSeconds.doubleValue() * 1000));
+    return new Date((long) Math.floor(timestampInSeconds.doubleValue() * 1000));
   }
 
   public static ExchangeMetaData adaptMetaData(List<CurrencyPair> currencyPairs, ExchangeMetaData metaData) {

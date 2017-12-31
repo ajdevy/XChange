@@ -1,5 +1,9 @@
 package org.knowm.xchange.kraken.service;
 
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Set;
+
 import org.knowm.xchange.Exchange;
 import org.knowm.xchange.currency.Currency;
 import org.knowm.xchange.currency.CurrencyPair;
@@ -17,13 +21,9 @@ import org.knowm.xchange.kraken.dto.marketdata.results.KrakenServerTimeResult;
 import org.knowm.xchange.kraken.dto.trade.KrakenOrderFlags;
 import org.knowm.xchange.service.BaseExchangeService;
 import org.knowm.xchange.service.BaseService;
-import si.mazi.rescu.ClientConfig;
+
 import si.mazi.rescu.ParamsDigest;
 import si.mazi.rescu.RestProxyFactory;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Set;
 
 public class KrakenBaseService extends BaseExchangeService implements BaseService {
 
@@ -39,14 +39,7 @@ public class KrakenBaseService extends BaseExchangeService implements BaseServic
 
     super(exchange);
 
-    ClientConfig rescuConfig = new ClientConfig(); // default rescu config
-
-    int customHttpReadTimeout = exchange.getExchangeSpecification().getHttpReadTimeout();
-    if (customHttpReadTimeout > 0) {
-      rescuConfig.setHttpReadTimeout(customHttpReadTimeout);
-    }
-
-    kraken = RestProxyFactory.createProxy(KrakenAuthenticated.class, exchange.getExchangeSpecification().getSslUri(), rescuConfig);
+    kraken = RestProxyFactory.createProxy(KrakenAuthenticated.class, exchange.getExchangeSpecification().getSslUri(), getClientConfig());
     signatureCreator = KrakenDigest.createInstance(exchange.getExchangeSpecification().getSecretKey());
   }
 

@@ -9,7 +9,6 @@ import org.knowm.xchange.luno.service.LunoAccountService;
 import org.knowm.xchange.luno.service.LunoMarketDataService;
 import org.knowm.xchange.luno.service.LunoTradeService;
 
-import si.mazi.rescu.ClientConfig;
 import si.mazi.rescu.SynchronizedValueFactory;
 
 /**
@@ -17,39 +16,33 @@ import si.mazi.rescu.SynchronizedValueFactory;
  */
 public class LunoExchange extends BaseExchange implements Exchange {
 
-    @Override
-    protected void initServices() {
-        ClientConfig rescuConfig = new ClientConfig(); // default rescu config
-        int customHttpReadTimeout = getExchangeSpecification().getHttpReadTimeout();
-        if (customHttpReadTimeout > 0) {
-            rescuConfig.setHttpReadTimeout(customHttpReadTimeout);
-        }
-        final LunoAPI luno = new LunoAPIImpl(getExchangeSpecification().getApiKey(), getExchangeSpecification().getSecretKey(),
-                getExchangeSpecification().getSslUri(), rescuConfig);
-        this.marketDataService = new LunoMarketDataService(this, luno);
-        this.tradeService = new LunoTradeService(this, luno);
-        this.accountService = new LunoAccountService(this, luno);
-    }
+  @Override
+  protected void initServices() {
 
-    @Override
-    public ExchangeSpecification getDefaultExchangeSpecification() {
+    this.marketDataService = new LunoMarketDataService(this);
+    this.tradeService = new LunoTradeService(this);
+    this.accountService = new LunoAccountService(this);
+  }
 
-        ExchangeSpecification exchangeSpecification = new ExchangeSpecification(this.getClass().getCanonicalName());
-        exchangeSpecification.setSslUri("https://api.mybitx.com");
-        exchangeSpecification.setHost("api.mybitx.com");
-        exchangeSpecification.setPort(443);
-        exchangeSpecification.setExchangeName("Luno");
-        exchangeSpecification.setExchangeDescription("Luno is a bitcoin exchange.");
-        return exchangeSpecification;
-    }
+  @Override
+  public ExchangeSpecification getDefaultExchangeSpecification() {
 
-    @Override
-    public SynchronizedValueFactory<Long> getNonceFactory() {
-        throw new RuntimeException("Nonce parameter is not required by Luno API.");
-    }
+    ExchangeSpecification exchangeSpecification = new ExchangeSpecification(this.getClass().getCanonicalName());
+    exchangeSpecification.setSslUri("https://api.mybitx.com");
+    exchangeSpecification.setHost("api.mybitx.com");
+    exchangeSpecification.setPort(443);
+    exchangeSpecification.setExchangeName("Luno");
+    exchangeSpecification.setExchangeDescription("Luno is a bitcoin exchange.");
+    return exchangeSpecification;
+  }
 
-    @Override
-    public void remoteInit() throws IOException {
+  @Override
+  public SynchronizedValueFactory<Long> getNonceFactory() {
+    throw new RuntimeException("Nonce parameter is not required by Luno API.");
+  }
 
-    }
+  @Override
+  public void remoteInit() throws IOException {
+
+  }
 }
