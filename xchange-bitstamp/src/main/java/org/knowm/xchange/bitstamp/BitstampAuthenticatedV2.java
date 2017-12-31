@@ -82,4 +82,10 @@ public interface BitstampAuthenticatedV2 {
       @FormParam("nonce") SynchronizedValueFactory<Long> nonce, @FormParam("amount") BigDecimal amount,
       @FormParam("address") String address) throws BitstampException, IOException;
 
+  @POST
+  @Path("transfer-to-main/")
+  BitstampWithdrawal transferSubAccountBalanceToMain(@FormParam("key") String apiKey, @FormParam("signature") ParamsDigest signer,
+      @FormParam("nonce") SynchronizedValueFactory<Long> nonce, @FormParam("amount") BigDecimal amount,
+      @FormParam("currency") String currency, @FormParam("subAccount") String subAccount) throws BitstampException, IOException;
+
 }
