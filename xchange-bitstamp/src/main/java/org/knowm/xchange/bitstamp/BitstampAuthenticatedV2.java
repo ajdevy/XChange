@@ -94,9 +94,4 @@ public interface BitstampAuthenticatedV2 {
   @Path("withdrawal-requests/")
   WithdrawalRequest[] getWithdrawalRequests(@FormParam("key") String apiKey, @FormParam("signature") ParamsDigest signer,
       @FormParam("nonce") SynchronizedValueFactory<Long> nonce, @FormParam("timedelta") Long timeDelta) throws BitstampException, IOException;
-
-  BitstampWithdrawal transferSubAccountBalanceToMain(@FormParam("key") String apiKey, @FormParam("signature") ParamsDigest signer,
-      @FormParam("nonce") SynchronizedValueFactory<Long> nonce, @FormParam("amount") BigDecimal amount,
-      @FormParam("currency") String currency, @FormParam("subAccount") String subAccount) throws BitstampException, IOException;
-
 }
