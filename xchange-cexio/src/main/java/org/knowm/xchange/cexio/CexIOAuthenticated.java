@@ -21,6 +21,7 @@ import org.knowm.xchange.cexio.dto.account.CexIOBalanceInfo;
 import org.knowm.xchange.cexio.dto.account.GHashIOHashrate;
 import org.knowm.xchange.cexio.dto.account.GHashIOWorkers;
 import org.knowm.xchange.cexio.dto.trade.CexIOArchivedOrder;
+import org.knowm.xchange.cexio.dto.trade.CexIOCancelAllOrdersResponse;
 import org.knowm.xchange.cexio.dto.trade.CexIOOpenOrder;
 import org.knowm.xchange.cexio.dto.trade.CexIOOpenOrders;
 import org.knowm.xchange.cexio.dto.trade.CexIOOrder;
@@ -45,6 +46,10 @@ public interface CexIOAuthenticated extends CexIO {
   Object cancelOrder(@HeaderParam("signature") ParamsDigest signer, CexioSingleOrderIdRequest request) throws IOException;
 
   @POST
+  @Path("cancel_orders/{currencyA}/{currencyB}/")
+  CexIOCancelAllOrdersResponse cancelAllOrders(@HeaderParam("signature") ParamsDigest signer, @PathParam("currencyA") String currencyA, @PathParam("currencyB") String currencyB, CexIORequest request) throws IOException;
+
+  @POST
   @Path("place_order/{currencyA}/{currencyB}/")
   CexIOOrder placeOrder(@HeaderParam("signature") ParamsDigest signer, @PathParam("currencyA") String currencyA, @PathParam("currencyB") String currencyB, PlaceOrderRequest placeOrderRequest) throws IOException;
 
@@ -59,7 +64,7 @@ public interface CexIOAuthenticated extends CexIO {
 
   @POST
   @Path("archived_orders/{baseCcy}/{counterCcy}")
-  List<CexIOArchivedOrder> archivedOrders(@HeaderParam("signature") ParamsDigest signer, @PathParam("baseCcy") String baseCcy, @PathParam("counterCcy") String counterCcy, ArchivedOrdersRequest request);
+  List<CexIOArchivedOrder> archivedOrders(@HeaderParam("signature") ParamsDigest signer, @PathParam("baseCcy") String baseCcy, @PathParam("counterCcy") String counterCcy, ArchivedOrdersRequest request) throws IOException;
 
   @POST
   @Path("get_order/")
